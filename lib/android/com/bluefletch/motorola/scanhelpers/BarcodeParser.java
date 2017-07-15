@@ -31,10 +31,9 @@ import java.util.HashMap;
  */
 public class BarcodeParser {
     private final byte[] bytes;
-    private final byte startByte;
     private final byte endByte;
-    private final byte fncOneByte;
     private final HashMap<String, String> ais;
+    private String barcodeWithFNC1;
 
     /**
      * Stores fncOneByte (which delimits the end of variable length AI's.
@@ -43,12 +42,11 @@ public class BarcodeParser {
      * @param bytes Raw bytes from Barcode Scanner app.
      */
     public BarcodeParser(byte[] bytes) {
+        this.barcodeWithFNC1 = "";
         this.bytes = bytes;
-        this.startByte = bytes[0];
-        this.fncOneByte = bytes[1];
         this.endByte = bytes[bytes.length - 1];
         this.ais = new HashMap<String, String>();
-        decodeBytes();
+        decodeBytes(bytes);
     }
 
     /**
@@ -111,8 +109,11 @@ public class BarcodeParser {
      * </li>
      * </ul>
      */
-    public void decodeBytes() {
-        int currentCode = -1;
+    
+    public void decodeBytes(byte[] bytes) {
+        byte fncOneByte = bytes[0];
+        byte startByte = bytes[0];
+        int currentCode = ApplicationIdentifiers.CODE_C;
         switch (String.valueOf((bytes[0] & 0xFF))) {
             case "103":
                 currentCode = ApplicationIdentifiers.CODE_A;
@@ -181,25 +182,31 @@ public class BarcodeParser {
                 return;
             }
             //if the byte is the fnc1 byte then we know that the next value will be an AI
-            else if (bytes[i] == this.fncOneByte) {
+            else if (bytes[i] == fncOneByte) {
                 nextByteIsAI = true;
+                if(i > 0){
+                    this.barcodeWithFNC1 += "{FNC1}";
+                }
             }
             /*
             If this byte is explicitly set as an AI, or if the current read values are the max
             value for the current ai value, then we store it and read in the next value as an
             ai byte
              */
-            else if (nextByteIsAI || (currentAi != null && currentAiMax == currentAi.getAiValue()
-                    .length())) {
+            else if (nextByteIsAI || (currentAi != null && currentAiMax == currentAi.getAiValue().length())) {
                 if (ApplicationIdentifiers.tripleAis.contains(byteValue) ||
                         ApplicationIdentifiers.quadrupleAis.contains(byteValue)) {
                     // We need to delay reading in data in order to complete the 3/4 byte
                     nextByteIsSecondaryAI = true;
                     primaryAI = byteValue;
                 } else {
+
                     if (currentAi != null) ais.put(currentAi.aiName, currentAi.aiValue);
-                    currentAi = new AI(ApplicationIdentifiers.names.get(byteValue));
-                    currentAiMax = ApplicationIdentifiers.lengths.get(byteValue);
+                    if(ApplicationIdentifiers.names.get(byteValue) != null && ApplicationIdentifiers.lengths.get(byteValue) != null){
+                        currentAi = new AI(ApplicationIdentifiers.names.get(byteValue));
+                        currentAiMax = ApplicationIdentifiers.lengths.get(byteValue);
+                        this.barcodeWithFNC1 += byteValue;
+                    }
                 }
                 nextByteIsAI = false;
             }
@@ -207,13 +214,16 @@ public class BarcodeParser {
                 If we get this far, then the byte is clearly a value for the current AI,
                 but only if it isn't the start byte
              */
-            else if (bytes[i] != this.startByte && currentAi != null) {
+            else if (bytes[i] != startByte && currentAi != null) {
                 String mappedVal = mapCharacterFromByteValue(byteValue, currentCode);
                 currentAi.addToValue(mappedVal);
+
+                this.barcodeWithFNC1 += mappedVal;
             }
             i++;
         }
     }
+
 
     /**
      * @param currentCode The current code that is being used to translate bytes.
@@ -363,6 +373,10 @@ public class BarcodeParser {
      */
     public int getQuantity() {
         return this.ais.containsKey("count") ? Integer.parseInt(this.ais.get("count")) : 1;
+    }
+
+    public String getBarcodeWithFNC1() {
+        return this.barcodeWithFNC1;
     }
 
     /**

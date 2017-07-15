@@ -383,7 +383,7 @@ public final class ApplicationIdentifiers {
         names.put("11", "packDate");
         names.put("12", "packDate");
         names.put("13", "packDate");
-        names.put("15", "useThrough");
+        names.put("15", "sellThrough");
         names.put("17", "useThrough");
         names.put("20", "variant");
         names.put("21", "serial");
