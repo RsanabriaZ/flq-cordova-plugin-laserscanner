@@ -12,6 +12,7 @@ import com.bluefletch.motorola.BarcodeScan;
 import com.bluefletch.motorola.DataWedgeIntentHandler;
 import com.bluefletch.motorola.ScanCallback;
 import com.bluefletch.motorola.scanhelpers.DataWedgeParser;
+import com.bluefletch.motorola.scanhelpers.BarcodeParser;
 import com.foodlogiq.connect.MainActivity;
 
 import org.apache.cordova.CallbackContext;
@@ -209,11 +210,11 @@ public class MotorolaDatawedgePlugin extends CordovaPlugin {
             switch (scanFormat) {
                 case "CODE_128":
                     if (scanContent == null) return;
-                    // BarcodeParser barcodeParser = new BarcodeParser(scanContent);
-                    DataWedgeParser barcodeParser = new DataWedgeParser(scanContent);
+                    BarcodeParser barcodeParser = new BarcodeParser(scanContent);
+                    // DataWedgeParser barcodeParser = new DataWedgeParser(scanContent);
                     scanCallback.execute(new BarcodeScan(
                             scanFormat,
-                            scanningResult.getContents(),
+                            barcodeParser.getBarcodeWithFNC1(),
                             barcodeParser.getGlobalTradeItemNumber(),
                             barcodeParser.getLot(),
                             barcodeParser.getPackDate(),

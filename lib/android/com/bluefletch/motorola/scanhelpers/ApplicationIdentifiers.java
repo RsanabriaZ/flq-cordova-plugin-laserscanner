@@ -378,16 +378,16 @@ public final class ApplicationIdentifiers {
     static {
         names.put("00", "sscc");
         names.put("01", "gtin");
-        names.put("02", "content");
+        names.put("02", "gtin");
         names.put("10", "batchLot");
         names.put("11", "packDate");
         names.put("12", "packDate");
         names.put("13", "packDate");
-        names.put("15", "useThrough");
+        names.put("15", "sellThrough");
         names.put("17", "useThrough");
         names.put("20", "variant");
         names.put("21", "serial");
-        names.put("30", "variableCount");
+        names.put("30", "count");
         names.put("37", "count");
         names.put("310", "netWeightKilo");
         names.put("320", "netWeightPounds");

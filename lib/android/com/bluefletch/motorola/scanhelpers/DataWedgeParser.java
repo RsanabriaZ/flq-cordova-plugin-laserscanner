@@ -2,6 +2,7 @@ package com.bluefletch.motorola.scanhelpers;
 
 import java.util.HashMap;
 import java.util.Map;
+import android.util.Log;
 
 /**
  * Parse a GS1128Barcode from data retrieved from devices
@@ -31,67 +32,24 @@ public class DataWedgeParser {
     }
 
     private final HashMap<String, String> ais;
+    private String barcodeWithFNC1;
 
     public DataWedgeParser(byte[] bytes) {
+        this.barcodeWithFNC1 = "";
         this.ais = new HashMap<String, String>();
         parseFromDataWedge(bytes);
     }
 
     public void parseFromDataWedge(byte[] bytes) {
-
-        boolean done = false;
         int i = 0;
-        while (!done) {
-            // get the AI from the byte array (could be 2, 3, or 4 digits)
-            String ai = null;
-            int[] lengths = new int[]{2, 3, 4};
-            for (int j = 0; (j < lengths.length) && (ai == null); j++) {
-                String a = "";
-                for (int k = 0; k < j; k++) {
-                    a += String.valueOf((char) (bytes[i + k] & 0xFF));
-                }
-
-                if (aiLengths.get(a) != null) {
-                    ai = a;
-                }
-            }
-
-
-            if (ai == null) {
-                done = true;
+        while ( i < bytes.length) {
+            String a = String.valueOf(bytes[i]);
+            if (a.equals("29")) {
+                this.barcodeWithFNC1 += "{FNC1}";
             } else {
-                i += ai.length();
-
-                // if the length is not obvious from the AI, look for the termination character
-                boolean foundTerm = false;
-                Integer l = aiLengths.get(ai);
-                if (l == 0) {
-                    int c = 1;
-                    while (!foundTerm && (i + c < bytes.length)) {
-                        String a = String.valueOf(bytes[i + c]);
-                        if (a.equals("29")) {
-                            foundTerm = true;
-                        } else {
-                            c++;
-                        }
-                    }
-                    l = c;
-                }
-
-                String contentData = "";
-                for (int j = 0; j < l; j++) {
-                    contentData += String.valueOf((char) (bytes[i + j] & 0xFF));
-                }
-                this.ais.put(ApplicationIdentifiers.names.get(ai), contentData);
-                i += l;
-
-                // if a termination character was found, skip it before reading
-                // the next barcode
-                if (foundTerm) i++;
+                this.barcodeWithFNC1 += String.valueOf((char) (bytes[i] & 0xFF));
             }
-            if (i == bytes.length) {
-                done = true;
-            }
+            i++;
         }
     }
 
@@ -108,6 +66,10 @@ public class DataWedgeParser {
             return this.ais.get("gtin");
         }
         return "";
+    }
+
+    public String getBarcodeWithFNC1(){
+        return this.barcodeWithFNC1;
     }
 
     public String getLot() {
@@ -127,6 +89,6 @@ public class DataWedgeParser {
     }
 
     public int getQuantity() {
-        return this.ais.containsKey("count") ? Integer.parseInt(this.ais.get("count")) : 1;
+        return this.ais.containsKey("count") ? Integer.parseInt(this.ais.get("count")) : 0;
     }
 }

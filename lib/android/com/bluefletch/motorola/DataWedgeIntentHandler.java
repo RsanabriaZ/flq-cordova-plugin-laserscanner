@@ -234,7 +234,7 @@ public class DataWedgeIntentHandler{
                 String packedDateString = dataWedgeParser.getPackDate();
                 scanCallback.execute(new BarcodeScan(
                         scanFormat,
-                        scannedString,
+                        dataWedgeParser.getBarcodeWithFNC1(),
                         globalTradeItemNumber,
                         lot,
                         packedDateString,
