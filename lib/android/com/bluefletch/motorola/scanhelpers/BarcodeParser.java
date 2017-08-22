@@ -162,6 +162,7 @@ public class BarcodeParser {
                     byteValue = primaryAI + byteValue;
                     currentAi = new AI(ApplicationIdentifiers.names.get(byteValue));
                     currentAiMax = ApplicationIdentifiers.lengths.get(byteValue);
+                    this.barcodeWithFNC1 += byteValue;
                 }
                 nextByteIsSecondaryAI = false;
                 primaryAI = "";
