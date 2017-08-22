@@ -371,7 +371,8 @@ public final class ApplicationIdentifiers {
         lengths.put("30", 8);
         lengths.put("37", -1);
         lengths.put("310", 6);
-        lengths.put("320", 6);
+        lengths.put("3201", 6);
+        lengths.put("3202", 6);
         lengths.put("412", 13);
     }
 
@@ -390,7 +391,8 @@ public final class ApplicationIdentifiers {
         names.put("30", "count");
         names.put("37", "count");
         names.put("310", "netWeightKilo");
-        names.put("320", "netWeightPounds");
+        names.put("3201", "netWeightPounds");
+        names.put("3202", "netWeightPounds");
         names.put("412", "purchaseFromGln");
     }
 }
