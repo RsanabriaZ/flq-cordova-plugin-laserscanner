@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import android.os.Build;
 
 public class MotorolaDatawedgePlugin extends CordovaPlugin {
 
@@ -305,18 +306,22 @@ public class MotorolaDatawedgePlugin extends CordovaPlugin {
      * The datawedge configuration should be stored in the $ROOT/src/main/assets/
      */
     private void importDataWedgeConfig() throws IOException {
-        InputStream in = this.cordova.getActivity().getResources().getAssets().open("dwprofile_FoodLogiQ-Ionic.db");
-        OutputStream out = new FileOutputStream
-                ("/enterprise/device/settings/datawedge/autoimport/dwprofile_FoodLogiQ-Ionic.db");
-        byte[] buffer = new byte[1024];
-        int read;
-        while ((read = in.read(buffer)) != -1) {
-            out.write(buffer, 0, read);
+        String version = Build.VERSION.RELEASE;
+        if(!version.matches("4.1(.*)")){
+            String dbName = "dwprofile_FoodLogiQ-Ionic.db";
+            InputStream in = this.cordova.getActivity().getResources().getAssets().open("dwprofile_FoodLogiQ-Ionic.db");
+            OutputStream out = new FileOutputStream
+                    ("/enterprise/device/settings/datawedge/autoimport/dwprofile_FoodLogiQ-Ionic.db");
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            out.flush();
+            out.close();
+            Runtime.getRuntime().exec("chmod 777 " +
+                    "/enterprise/device/settings/datawedge/autoimport/dwprofile_FoodLogiQ-Ionic.db");
         }
-        in.close();
-        out.flush();
-        out.close();
-        Runtime.getRuntime().exec("chmod 777 " +
-                "/enterprise/device/settings/datawedge/autoimport/dwprofile_FoodLogiQ-Ionic.db");
     }
 }
