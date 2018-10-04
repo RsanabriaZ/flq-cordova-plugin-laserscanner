@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0",
+  "name": "com.bluefletch.motorola",
+  "cordova_name": "com.bluefletch.motorola",
+  "description": "Motorola Cordova Plugin",
+  "license": "MIT",
+  "repo": "https://github.com/RsanabriaZ/flq-cordova-plugin-laserscanner.git",
+  "issue": "",
+  "keywords": [],
+  "platforms": [
+    "android"
+  ],
+  "cordova": {
+    "id": "com.bluefletch.motorola",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RsanabriaZ/flq-cordova-plugin-laserscanner.git"
+  },
+  "engines": {
+    "cordovaDependencies": {
+      ">=0.1": {
+        "cordova-ios": "<=4.5.0"
+      }
+    }
+  }
+}
